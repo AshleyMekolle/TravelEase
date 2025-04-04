@@ -1,0 +1,46 @@
+.mode-toggle-button {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--color-foreground);
+    cursor: pointer;
+  }
+  
+  .mode-toggle-button:hover {
+    background-color: var(--color-muted);
+  }
+  
+  .mode-toggle-icon {
+    height: 1.2rem;
+    width: 1.2rem;
+    transition: all 0.3s ease;
+  }
+  
+  .mode-toggle-sun {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  
+  .mode-toggle-moon {
+    position: absolute;
+    opacity: 0;
+    transform: rotate(90deg) scale(0);
+  }
+  
+  .dark .mode-toggle-sun {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0);
+  }
+  
+  .dark .mode-toggle-moon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  
+  

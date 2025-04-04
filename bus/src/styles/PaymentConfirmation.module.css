@@ -1,0 +1,380 @@
+.confirmationContainer {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  .successHeader {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .successIcon {
+    font-size: 3.5rem;
+    color: #28a745;
+    margin-bottom: 1rem;
+  }
+  
+  .successHeader h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .successHeader p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+  
+  .ticketContainer {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .ticketHeader {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: #fff;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logoSection h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .logoSection span {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+  
+  .ticketNumber {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+  }
+  
+  .journeyDetails {
+    padding: 2rem;
+    border-bottom: 1px dashed #ddd;
+    position: relative;
+  }
+  
+  .journeyDetails::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+  }
+  
+  .journeyDetails::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+  }
+  
+  .journeyRoute {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .locationBox {
+    text-align: center;
+    min-width: 100px;
+  }
+  
+  .location {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: #333;
+  }
+  
+  .time {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+  }
+  
+  .journeyLine {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+  }
+  
+  .dot {
+    width: 12px;
+    height: 12px;
+    background-color: #007bff;
+    border-radius: 50%;
+  }
+  
+  .line {
+    flex: 1;
+    height: 2px;
+    background-color: #007bff;
+  }
+  
+  .detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .detailItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .detailIcon {
+    font-size: 1.2rem;
+    color: #007bff;
+    width: 24px;
+  }
+  
+  .detailLabel {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 3px 0;
+  }
+  
+  .detailValue {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+  }
+  
+  .passengerInfo {
+    padding: 2rem;
+    border-bottom: 1px dashed #ddd;
+    position: relative;
+  }
+  
+  .passengerInfo::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+  }
+  
+  .passengerInfo::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+  }
+  
+  .passengerInfo h4 {
+    font-size: 1.1rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .passenger {
+    margin-bottom: 1rem;
+  }
+  
+  .passengerName {
+    font-weight: 500;
+    margin: 0 0 3px 0;
+  }
+  
+  .passengerDetails {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+  }
+  
+  .paymentInfo {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px dashed #ddd;
+    position: relative;
+  }
+  
+  .paymentInfo::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+  }
+  
+  .paymentInfo::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+  }
+  
+  .paymentRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+  }
+  
+  .paymentRow:last-child {
+    margin-bottom: 0;
+  }
+  
+  .amount {
+    font-weight: 600;
+    color: #007bff;
+  }
+  
+  .barcodeSection {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .barcode {
+    text-align: center;
+    width: 80%;
+  }
+  
+  .dummyBarcode {
+    height: 60px;
+    background-image: repeating-linear-gradient(
+      90deg,
+      #000,
+      #000 2px,
+      transparent 2px,
+      transparent 6px
+    );
+    margin-bottom: 0.5rem;
+  }
+  
+  .actionButtons {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .downloadButton, .shareButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.3s ease;
+    border: none;
+  }
+  
+  .downloadButton {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .downloadButton:hover {
+    background-color: #0069d9;
+  }
+  
+  .shareButton {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+  }
+  
+  .shareButton:hover {
+    background-color: #e2e6ea;
+  }
+  
+  .nextActions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .homeButton, .viewBookingsButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .homeButton {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+  }
+  
+  .homeButton:hover {
+    background-color: #e2e6ea;
+  }
+  
+  .viewBookingsButton {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+  }
+  
+  .viewBookingsButton:hover {
+    background-color: #5a6268;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .detailsGrid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .actionButtons {
+      flex-direction: column;
+    }
+    
+    .nextActions {
+      flex-direction: column;
+    }
+  }
