@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { useState } from "react"
@@ -24,7 +25,7 @@ export default function SignupPage() {
     confirmPassword: "",
   })
 
-  const handleChange = (e) => {
+  const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
 
@@ -52,7 +53,7 @@ export default function SignupPage() {
     return valid
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
 
     if (!validateForm()) return

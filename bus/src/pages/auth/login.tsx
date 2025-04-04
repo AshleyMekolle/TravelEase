@@ -10,26 +10,26 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
-
-    // Simulate login
+  
     await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Store user in localStorage
+  
+    const form = e.currentTarget
+  
     localStorage.setItem(
       "travelease-user",
       JSON.stringify({
         name: "John Doe",
-        email: e.target.email.value,
+        email: (form.elements.namedItem("email") as HTMLInputElement).value,
       }),
     )
-
+  
     setIsLoading(false)
     navigate("/")
   }
-
+  
   return (
     <div className="auth-page">
       <div className="auth-container">

@@ -28,7 +28,7 @@ export default function HomePage() {
             </div>
             <div className="hero-image-container">
               <div className="hero-image">
-                <img src="/placeholder.svg?height=400&width=600" alt="Bus travel" />
+                <img src="/bus1.png" alt="Bus travel" />
               </div>
               <div className="hero-badge">
                 <div className="hero-badge-content">
@@ -169,10 +169,10 @@ export default function HomePage() {
           </div>
 
           <div className="routes-grid">
-            {[1, 2, 3, 4, 5, 6].map((route) => (
+            {[5, 2, 3, 4, 5, 6].map((route) => (
               <div className="route-card" key={route}>
                 <div className="route-image">
-                  <img src={`/placeholder.svg?height=160&width=320&text=Route ${route}`} alt="Bus route" />
+                  <img src={`/bus${route}.png`} alt="Bus route" />
                 </div>
                 <div className="route-content">
                   <div className="route-header">
@@ -267,7 +267,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="cta-image">
-              <img src="/placeholder.svg?height=400&width=600" alt="Bus travel" />
+              <img src="/bus1.png" alt="Bus travel" />
             </div>
           </div>
         </div>
@@ -309,7 +309,7 @@ export default function HomePage() {
                 </p>
                 <div className="testimonial-author">
                   <div className="testimonial-avatar">
-                    <img src={`/placeholder.svg?height=40&width=40&text=${testimonial}`} alt="Customer" />
+                    <img src={`/avatar${testimonial}.png`} alt="Customer" />
                   </div>
                   <div className="testimonial-info">
                     <p>Customer Name</p>
@@ -322,31 +322,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="newsletter-section">
-        <div className="container">
-          <div className="newsletter-container">
-            <h2 className="newsletter-title">Subscribe to Our Newsletter</h2>
-            <p className="newsletter-description">
-              Get the latest updates, travel tips, and exclusive offers directly to your inbox.
-            </p>
-            <form className="newsletter-form">
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="form-input newsletter-input"
-                required
-              />
-              <button type="submit" className="btn btn-primary">
-                Subscribe
-              </button>
-            </form>
-            <p className="newsletter-disclaimer">
-              By subscribing, you agree to our Privacy Policy and consent to receive updates from TravelEase.
-            </p>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

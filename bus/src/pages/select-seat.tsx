@@ -18,15 +18,31 @@ import {
 } from "lucide-react"
 import "../styles/select-seat.css"
 
+interface BusDetails {
+  id: number;
+  company: string;
+  from: string;
+  to: string;
+  date: string;
+  departureTime: string;
+  arrivalTime: string;
+  duration: string;
+  price: number;
+  totalSeats: number;
+  availableSeats: number;
+  bookedSeats: string[];
+  amenities: string[];
+}
+
 export default function SelectSeatPage() {
-  const { id } = useParams()
+  const { id } = useParams<{ id: string }>()
   const location = useLocation()
   const navigate = useNavigate()
   const searchParams = new URLSearchParams(location.search)
 
   const [loading, setLoading] = useState(true)
-  const [busDetails, setBusDetails] = useState(null)
-  const [selectedSeats, setSelectedSeats] = useState([])
+  const [busDetails, setBusDetails] = useState<BusDetails | null>(null)
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([])
   const [showSeatInfo, setShowSeatInfo] = useState(false)
 
   const from = searchParams.get("from") || "douala"
@@ -34,33 +50,34 @@ export default function SelectSeatPage() {
   const date = searchParams.get("date") || new Date().toISOString().split("T")[0]
   const passengers = Number.parseInt(searchParams.get("passengers") || "1")
 
-  // Mock bus data
-  const mockBusData = {
-    id: Number.parseInt(id),
-    company: "Express Travel",
-    from: from,
-    to: to,
-    date: date,
-    departureTime: "08:00",
-    arrivalTime: "11:30",
-    duration: "3h 30m",
-    price: 5000,
-    totalSeats: 40,
-    availableSeats: 23,
-    bookedSeats: ["A1", "A4", "B2", "B3", "C1", "C4", "D2", "D3", "E1", "E4", "F2", "F3", "G1", "G4", "H2", "H3", "I1"],
-    amenities: ["wifi", "ac", "usb", "tv"],
-  }
-
   useEffect(() => {
     // Simulate API call to get bus details
     setLoading(true)
+    const mockBusData: BusDetails = {
+      id: id ? parseInt(id) : 0,
+      company: "Express Travel",
+      from: from,
+      to: to,
+      date: date,
+      departureTime: "08:00",
+      arrivalTime: "11:30",
+      duration: "3h 30m",
+      price: 5000,
+      totalSeats: 40,
+      availableSeats: 23,
+      bookedSeats: ["A1", "A4", "B2", "B3", "C1", "C4", "D2", "D3", "E1", "E4", "F2", "F3", "G1", "G4", "H2", "H3", "I1"],
+      amenities: ["wifi", "ac", "usb", "tv"],
+    }
+
     setTimeout(() => {
       setBusDetails(mockBusData)
       setLoading(false)
     }, 1000)
-  }, [id])
+  }, [id, from, to, date])
 
-  const handleSeatClick = (seat) => {
+  const handleSeatClick = (seat: string) => {
+    if (!busDetails) return;
+    
     if (busDetails.bookedSeats.includes(seat)) {
       return // Seat is already booked
     }
@@ -83,8 +100,10 @@ export default function SelectSeatPage() {
     }
   }
 
-  const getSeatStatus = (seat) => {
-    if (busDetails?.bookedSeats.includes(seat)) {
+  const getSeatStatus = (seat: string) => {
+    if (!busDetails) return "booked";
+    
+    if (busDetails.bookedSeats.includes(seat)) {
       return "booked"
     }
     if (selectedSeats.includes(seat)) {
@@ -95,7 +114,6 @@ export default function SelectSeatPage() {
 
   const renderSeats = () => {
     const rows = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-    const seatsPerRow = 4 // 2 seats on each side with an aisle in the middle
 
     return (
       <div className="seat-layout">
@@ -138,7 +156,7 @@ export default function SelectSeatPage() {
     )
   }
 
-  const formatCityName = (city) => {
+  const formatCityName = (city: string) => {
     if (!city) return ""
     return city.charAt(0).toUpperCase() + city.slice(1)
   }
@@ -148,6 +166,8 @@ export default function SelectSeatPage() {
       alert("Please select at least one seat")
       return
     }
+
+    if (!busDetails) return;
 
     // Navigate to payment page with selected seats
     navigate(`/payment/${id}?from=${from}&to=${to}&date=${date}&seats=${selectedSeats.join(",")}`)
@@ -160,6 +180,18 @@ export default function SelectSeatPage() {
           <div className="select-seat-loading">
             <div className="loading-spinner"></div>
             <p>Loading bus details...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!busDetails) {
+    return (
+      <div className="select-seat-page">
+        <div className="container">
+          <div className="select-seat-error">
+            <p>No bus details available</p>
           </div>
         </div>
       </div>
@@ -379,4 +411,3 @@ export default function SelectSeatPage() {
     </div>
   )
 }
-

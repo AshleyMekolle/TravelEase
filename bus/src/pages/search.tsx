@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   ArrowRight,
@@ -19,6 +19,44 @@ import {
 } from "lucide-react"
 import "../styles/search.css"
 
+interface Bus {
+  id: number
+  company: string
+  from: string
+  to: string
+  departureTime: string
+  arrivalTime: string
+  duration: string
+  price: number
+  availableSeats: number
+  amenities: string[]
+  departureCategory: string
+}
+
+interface SearchData {
+  from: string
+  to: string
+  date: string
+  passengers: string
+}
+
+interface DepartureFilters {
+  morning: boolean
+  afternoon: boolean
+  evening: boolean
+}
+
+interface CompanyFilters {
+  [key: string]: boolean
+}
+
+interface AmenityFilters {
+  wifi: boolean
+  ac: boolean
+  usb: boolean
+  tv: boolean
+}
+
 export default function SearchPage() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -26,8 +64,8 @@ export default function SearchPage() {
 
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [filteredBuses, setFilteredBuses] = useState([])
-  const [searchData, setSearchData] = useState({
+  const [filteredBuses, setFilteredBuses] = useState<Bus[]>([])
+  const [searchData, setSearchData] = useState<SearchData>({
     from: searchParams.get("from") || "",
     to: searchParams.get("to") || "",
     date: searchParams.get("date") || new Date().toISOString().split("T")[0],
@@ -36,18 +74,18 @@ export default function SearchPage() {
 
   // Filter states
   const [priceRange, setPriceRange] = useState(10000)
-  const [departureFilters, setDepartureFilters] = useState({
+  const [departureFilters, setDepartureFilters] = useState<DepartureFilters>({
     morning: true,
     afternoon: true,
     evening: false,
   })
-  const [companyFilters, setCompanyFilters] = useState({
+  const [companyFilters, setCompanyFilters] = useState<CompanyFilters>({
     "Express Travel": true,
     "Comfort Line": true,
     "Royal Tours": true,
     "City Link": true,
   })
-  const [amenityFilters, setAmenityFilters] = useState({
+  const [amenityFilters, setAmenityFilters] = useState<AmenityFilters>({
     wifi: true,
     ac: true,
     usb: false,
@@ -56,7 +94,7 @@ export default function SearchPage() {
   const [sortBy, setSortBy] = useState("price")
 
   // Mock data for bus results
-  const allBuses = [
+  const allBuses: Bus[] = [
     {
       id: 1,
       company: "Express Travel",
@@ -190,93 +228,7 @@ export default function SearchPage() {
     },
   ]
 
-  useEffect(() => {
-    // Simulate API call
-    setLoading(true)
-    setTimeout(() => {
-      applyFilters()
-      setLoading(false)
-    }, 1000)
-  }, [searchData, priceRange, departureFilters, companyFilters, amenityFilters, sortBy])
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setSearchData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
-  const handleSearch = (e) => {
-    e.preventDefault()
-
-    // Update URL with search params
-    navigate(
-      `/search?from=${searchData.from}&to=${searchData.to}&date=${searchData.date}&passengers=${searchData.passengers}`,
-    )
-
-    // Apply filters
-    applyFilters()
-  }
-
-  const toggleFilters = () => {
-    setFiltersOpen(!filtersOpen)
-  }
-
-  const handlePriceChange = (e) => {
-    setPriceRange(Number.parseInt(e.target.value))
-  }
-
-  const handleDepartureFilterChange = (e) => {
-    const { name, checked } = e.target
-    setDepartureFilters((prev) => ({
-      ...prev,
-      [name]: checked,
-    }))
-  }
-
-  const handleCompanyFilterChange = (e) => {
-    const { name, checked } = e.target
-    setCompanyFilters((prev) => ({
-      ...prev,
-      [name]: checked,
-    }))
-  }
-
-  const handleAmenityFilterChange = (e) => {
-    const { name, checked } = e.target
-    setAmenityFilters((prev) => ({
-      ...prev,
-      [name]: checked,
-    }))
-  }
-
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value)
-  }
-
-  const resetFilters = () => {
-    setPriceRange(10000)
-    setDepartureFilters({
-      morning: true,
-      afternoon: true,
-      evening: false,
-    })
-    setCompanyFilters({
-      "Express Travel": true,
-      "Comfort Line": true,
-      "Royal Tours": true,
-      "City Link": true,
-    })
-    setAmenityFilters({
-      wifi: true,
-      ac: true,
-      usb: false,
-      tv: false,
-    })
-  }
-
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     // Filter buses based on search criteria and filters
     const filtered = allBuses.filter((bus) => {
       // Match route
@@ -292,7 +244,7 @@ export default function SearchPage() {
       }
 
       // Departure time filter
-      if (!departureFilters[bus.departureCategory]) {
+      if (!departureFilters[bus.departureCategory as keyof DepartureFilters]) {
         return false
       }
 
@@ -329,9 +281,95 @@ export default function SearchPage() {
     })
 
     setFilteredBuses(filtered)
+  }, [searchData, priceRange, departureFilters, companyFilters, amenityFilters, sortBy])
+
+  useEffect(() => {
+    // Simulate API call
+    setLoading(true)
+    setTimeout(() => {
+      applyFilters()
+      setLoading(false)
+    }, 1000)
+  }, [applyFilters])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setSearchData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
   }
 
-  const getAmenityIcon = (amenity) => {
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    // Update URL with search params
+    navigate(
+      `/search?from=${searchData.from}&to=${searchData.to}&date=${searchData.date}&passengers=${searchData.passengers}`,
+    )
+
+    // Apply filters
+    applyFilters()
+  }
+
+  const toggleFilters = () => {
+    setFiltersOpen(!filtersOpen)
+  }
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPriceRange(Number.parseInt(e.target.value))
+  }
+
+  const handleDepartureFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target
+    setDepartureFilters((prev) => ({
+      ...prev,
+      [name]: checked,
+    }))
+  }
+
+  const handleCompanyFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target
+    setCompanyFilters((prev) => ({
+      ...prev,
+      [name]: checked,
+    }))
+  }
+
+  const handleAmenityFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target
+    setAmenityFilters((prev) => ({
+      ...prev,
+      [name]: checked,
+    }))
+  }
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortBy(e.target.value)
+  }
+
+  const resetFilters = () => {
+    setPriceRange(10000)
+    setDepartureFilters({
+      morning: true,
+      afternoon: true,
+      evening: false,
+    })
+    setCompanyFilters({
+      "Express Travel": true,
+      "Comfort Line": true,
+      "Royal Tours": true,
+      "City Link": true,
+    })
+    setAmenityFilters({
+      wifi: true,
+      ac: true,
+      usb: false,
+      tv: false,
+    })
+  }
+
+  const getAmenityIcon = (amenity: string) => {
     switch (amenity) {
       case "wifi":
         return <Wifi className="amenity-icon" />
@@ -346,7 +384,7 @@ export default function SearchPage() {
     }
   }
 
-  const getAmenityLabel = (amenity) => {
+  const getAmenityLabel = (amenity: string) => {
     switch (amenity) {
       case "wifi":
         return "WiFi"
@@ -361,7 +399,7 @@ export default function SearchPage() {
     }
   }
 
-  const formatCityName = (city) => {
+  const formatCityName = (city: string) => {
     if (!city) return ""
     return city.charAt(0).toUpperCase() + city.slice(1)
   }
@@ -739,4 +777,3 @@ export default function SearchPage() {
     </div>
   )
 }
-

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import { useState, useEffect } from "react"
@@ -5,63 +6,89 @@ import { Link, useParams, useLocation, useNavigate } from "react-router-dom"
 import { ArrowLeft, Check, CreditCard, Loader2, Phone, Shield } from "lucide-react"
 import "../styles/payment.css"
 
+interface BookingDetails {
+  id: number;
+  company: string;
+  from: string;
+  to: string;
+  date: string;
+  departureTime: string;
+  arrivalTime: string;
+  duration: string;
+  price: number;
+  seats: string[];
+  subtotal: number;
+  bookingFee: number;
+  total: number;
+}
+
+interface CardData {
+  cardNumber: string;
+  cardHolder: string;
+  expiryDate: string;
+  cvv: string;
+}
+
+interface MobileData {
+  phoneNumber: string;
+  provider: string;
+}
+
 export default function PaymentPage() {
-  const { id } = useParams()
+  const { id } = useParams<{ id: string }>()
   const location = useLocation()
   const navigate = useNavigate()
   const searchParams = new URLSearchParams(location.search)
 
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState(false)
-  const [bookingDetails, setBookingDetails] = useState(null)
+  const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null)
   const [paymentMethod, setPaymentMethod] = useState("card")
 
-  const from = searchParams.get("from") || "douala"
-  const to = searchParams.get("to") || "yaounde"
-  const date = searchParams.get("date") || new Date().toISOString().split("T")[0]
-  const seatsParam = searchParams.get("seats") || "A2"
+  const from = searchParams.get("from") ?? "douala"
+  const to = searchParams.get("to") ?? "yaounde"
+  const date = searchParams.get("date") ?? new Date().toISOString().split("T")[0]
+  const seatsParam = searchParams.get("seats") ?? "A2"
   const selectedSeats = seatsParam.split(",")
 
   // Form state
-  const [cardData, setCardData] = useState({
+  const [cardData, setCardData] = useState<CardData>({
     cardNumber: "",
     cardHolder: "",
     expiryDate: "",
     cvv: "",
   })
 
-  const [mobileData, setMobileData] = useState({
+  const [mobileData, setMobileData] = useState<MobileData>({
     phoneNumber: "",
     provider: "mtn",
   })
 
-  // Mock booking details
-  const mockBookingDetails = {
-    id: Number.parseInt(id),
-    company: "Express Travel",
-    from: from,
-    to: to,
-    date: date,
-    departureTime: "08:00",
-    arrivalTime: "11:30",
-    duration: "3h 30m",
-    price: 5000,
-    seats: selectedSeats,
-    subtotal: 5000 * selectedSeats.length,
-    bookingFee: 500,
-    total: 5000 * selectedSeats.length + 500,
-  }
-
   useEffect(() => {
-    // Simulate API call to get booking details
     setLoading(true)
+    const details = {
+      id: Number.parseInt(id ?? "0"),
+      company: "Express Travel",
+      from: from,
+      to: to,
+      date: date,
+      departureTime: "08:00",
+      arrivalTime: "11:30",
+      duration: "3h 30m",
+      price: 5000,
+      seats: selectedSeats,
+      subtotal: 5000 * selectedSeats.length,
+      bookingFee: 500,
+      total: 5000 * selectedSeats.length + 500,
+    }
+
     setTimeout(() => {
-      setBookingDetails(mockBookingDetails)
+      setBookingDetails(details)
       setLoading(false)
     }, 1000)
-  }, [id])
+  }, [id, from, to, date, selectedSeats])
 
-  const handleCardChange = (e) => {
+  const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setCardData((prev) => ({
       ...prev,
@@ -69,7 +96,7 @@ export default function PaymentPage() {
     }))
   }
 
-  const handleMobileChange = (e) => {
+  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setMobileData((prev) => ({
       ...prev,
@@ -77,27 +104,24 @@ export default function PaymentPage() {
     }))
   }
 
-  const handleProviderChange = (provider) => {
+  const handleProviderChange = (provider: string) => {
     setMobileData((prev) => ({
       ...prev,
       provider,
     }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setProcessing(true)
 
-    // Simulate payment processing
     setTimeout(() => {
       setProcessing(false)
-
-      // Navigate to booking confirmation page
       navigate(`/booking-confirmation/${id}?seats=${selectedSeats.join(",")}`)
     }, 2000)
   }
 
-  const formatCityName = (city) => {
+  const formatCityName = (city: string) => {
     if (!city) return ""
     return city.charAt(0).toUpperCase() + city.slice(1)
   }
@@ -113,6 +137,10 @@ export default function PaymentPage() {
         </div>
       </div>
     )
+  }
+
+  if (!bookingDetails) {
+    return <div>No booking details available</div>
   }
 
   return (
@@ -376,4 +404,3 @@ export default function PaymentPage() {
     </div>
   )
 }
-

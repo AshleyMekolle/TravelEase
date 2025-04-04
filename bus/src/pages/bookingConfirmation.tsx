@@ -1,79 +1,104 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Link, useParams, useLocation, useNavigate } from "react-router-dom"
+import { useState, useEffect, useCallback } from "react"
+import { Link, useParams, useLocation, } from "react-router-dom"
 import { ArrowLeft, Bus, Check, Clock, Download, Printer, Share2, Star, Ticket } from "lucide-react"
 import "../styles/booking-confirmation.css"
 
+interface BookingDetails {
+  id: number
+  reference: string
+  company: string
+  from: string
+  to: string
+  date: string
+  departureTime: string
+  arrivalTime: string
+  duration: string
+  price: number
+  seats: string[]
+  subtotal: number
+  bookingFee: number
+  total: number
+  status: string
+  paymentMethod: string
+  bookingDate: string
+  passengerName: string
+  passengerEmail: string
+  passengerPhone: string
+}
+
 export default function BookingConfirmationPage() {
-  const { id } = useParams()
+  const { id } = useParams<{ id?: string }>()
   const location = useLocation()
-  const navigate = useNavigate()
   const searchParams = new URLSearchParams(location.search)
 
   const [loading, setLoading] = useState(true)
-  const [bookingDetails, setBookingDetails] = useState(null)
+  const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null)
 
   const seatsParam = searchParams.get("seats") || "A2"
   const selectedSeats = seatsParam.split(",")
 
   // Generate a random booking reference
-  const generateBookingReference = () => {
+  const generateBookingReference = useCallback(() => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     let result = ""
     for (let i = 0; i < 8; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length))
     }
     return result
-  }
+  }, [])
 
   // Mock booking details
-  const mockBookingDetails = {
-    id: Number.parseInt(id),
-    reference: generateBookingReference(),
-    company: "Express Travel",
-    from: "douala",
-    to: "yaounde",
-    date: new Date().toISOString().split("T")[0],
-    departureTime: "08:00",
-    arrivalTime: "11:30",
-    duration: "3h 30m",
-    price: 5000,
-    seats: selectedSeats,
-    subtotal: 5000 * selectedSeats.length,
-    bookingFee: 500,
-    total: 5000 * selectedSeats.length + 500,
-    status: "confirmed",
-    paymentMethod: "Credit Card",
-    bookingDate: new Date().toISOString(),
-    passengerName: "John Doe",
-    passengerEmail: "john.doe@example.com",
-    passengerPhone: "+237 6XX XXX XXX",
-  }
+  const mockBookingDetails = useCallback(() => {
+    return {
+      id: id ? parseInt(id) : 0,
+      reference: generateBookingReference(),
+      company: "Express Travel",
+      from: "douala",
+      to: "yaounde",
+      date: new Date().toISOString().split("T")[0],
+      departureTime: "08:00",
+      arrivalTime: "11:30",
+      duration: "3h 30m",
+      price: 5000,
+      seats: selectedSeats,
+      subtotal: 5000 * selectedSeats.length,
+      bookingFee: 500,
+      total: 5000 * selectedSeats.length + 500,
+      status: "confirmed",
+      paymentMethod: "Credit Card",
+      bookingDate: new Date().toISOString(),
+      passengerName: "John Doe",
+      passengerEmail: "john.doe@example.com",
+      passengerPhone: "+237 6XX XXX XXX",
+    }
+  }, [generateBookingReference, id, selectedSeats])
 
   useEffect(() => {
     // Simulate API call to get booking details
     setLoading(true)
     setTimeout(() => {
-      setBookingDetails(mockBookingDetails)
+      const details = mockBookingDetails()
+      setBookingDetails(details)
       setLoading(false)
 
       // Save booking to localStorage
       const existingBookings = JSON.parse(localStorage.getItem("travelease-bookings") || "[]")
       const newBooking = {
-        ...mockBookingDetails,
+        ...details,
         id: existingBookings.length + 1,
       }
       localStorage.setItem("travelease-bookings", JSON.stringify([...existingBookings, newBooking]))
     }, 1000)
-  }, [id])
+  }, [id, mockBookingDetails])
 
-  const formatCityName = (city) => {
+  const formatCityName = (city: string): string => {
     if (!city) return ""
     return city.charAt(0).toUpperCase() + city.slice(1)
   }
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString("en-US", {
       weekday: "short",
       month: "short",
@@ -91,11 +116,15 @@ export default function BookingConfirmationPage() {
   }
 
   const handleShare = () => {
+    if (!bookingDetails) return
+
     if (navigator.share) {
       navigator.share({
         title: "My Bus Ticket",
         text: `I've booked a bus from ${formatCityName(bookingDetails.from)} to ${formatCityName(bookingDetails.to)} on ${formatDate(bookingDetails.date)}`,
         url: window.location.href,
+      }).catch(err => {
+        console.error("Error sharing:", err)
       })
     } else {
       alert("Sharing is not supported on this browser")
@@ -109,6 +138,18 @@ export default function BookingConfirmationPage() {
           <div className="booking-loading">
             <div className="loading-spinner"></div>
             <p>Loading booking details...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!bookingDetails) {
+    return (
+      <div className="booking-confirmation-page">
+        <div className="container">
+          <div className="booking-error">
+            <p>No booking details found.</p>
           </div>
         </div>
       </div>
@@ -261,4 +302,3 @@ export default function BookingConfirmationPage() {
     </div>
   )
 }
-

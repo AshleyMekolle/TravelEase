@@ -109,7 +109,7 @@ export default function ContactPage() {
           <div className="contact-map">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127505.34620916416!2d9.6867971!3d4.0510564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1061128340344df9%3A0x58842dbfdbd2c35!2sDouala%2C%20Cameroon!5e0!3m2!1sen!2sus!4v1625764215694!5m2!1sen!2sus"
-              allowFullScreen=""
+              allowFullScreen
               loading="lazy"
               title="TravelEase Office Location"
             ></iframe>
