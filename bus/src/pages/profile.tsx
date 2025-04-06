@@ -3,8 +3,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
@@ -13,23 +12,70 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import { useToast } from "../hooks/use-toast"
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
 import { Bell, CreditCard, Edit, Eye, EyeOff, Loader2, Lock, LogOut, Save, User } from "lucide-react"
+import "../styles/profile.css"
+
+// Define user data interface
+interface UserData {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  address: string
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}
 
 export default function ProfilePage() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-
-  // User data (would come from API in real app)
-  const [userData, setUserData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phone: "+237 655 123 456",
-    address: "123 Avenue de l'Indépendance, Douala",
+  const [userData, setUserData] = useState<UserData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address: "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   })
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  // Fetch user data on component mount
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Check if user is logged in by looking for stored user data
+        const storedUser = localStorage.getItem("user")
+
+        if (storedUser) {
+          const user = JSON.parse(storedUser)
+          setUserData({
+            ...userData,
+            firstName: user.firstName || "",
+            lastName: user.lastName || "",
+            email: user.email || "",
+            phone: user.phone || "",
+            address: user.address || "",
+          })
+          setIsAuthenticated(true)
+        } else {
+          // Redirect to login if no user data found
+          window.location.href = "/auth/login"
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error)
+        toast({
+          title: "Error",
+          description: "Failed to load user profile data",
+          variant: "destructive",
+        })
+      }
+    }
+
+    fetchUserData()
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -41,14 +87,31 @@ export default function ProfilePage() {
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      // Update user data in local storage
+      const storedUser = localStorage.getItem("user")
+      if (storedUser) {
+        const user = JSON.parse(storedUser)
+        const updatedUser = {
+          ...user,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          phone: userData.phone,
+          address: userData.address,
+        }
 
-      // Success
-      toast({
-        title: "Profile updated",
-        description: "Your profile information has been updated successfully.",
-      })
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+
+        // Save updated user data
+        localStorage.setItem("user", JSON.stringify(updatedUser))
+
+        // Success
+        toast({
+          title: "Profile updated",
+          description: "Your profile information has been updated successfully.",
+        })
+      }
     } catch (error) {
       toast({
         title: "Update failed",
@@ -75,6 +138,9 @@ export default function ProfilePage() {
     setIsLoading(true)
 
     try {
+      // In a real app, you would verify the current password and update with the new one
+      // Here we're just simulating the process
+
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
@@ -102,261 +168,367 @@ export default function ProfilePage() {
     }
   }
 
+  const handleLogout = () => {
+    // Clear user data from local storage
+    localStorage.removeItem("user")
+    // Redirect to login page
+    window.location.href = "/auth/login"
+  }
+
+  // Show loading state while checking authentication
+  if (!isAuthenticated) {
+    return (
+      <div className="profile-loading">
+        <Loader2 className="profile-loading-icon" />
+        <p>Loading profile...</p>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+    <div className="profile-page">
+      <div className="container">
+        <h1 className="profile-title">My Profile</h1>
 
-        <div className="grid gap-8 lg:grid-cols-4">
-          <div className="lg:col-span-1">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center">
-                    <Avatar className="h-24 w-24 mb-4">
-                      <AvatarImage src="/placeholder.svg?height=96&width=96" alt="Profile" />
-                      <AvatarFallback>JD</AvatarFallback>
-                    </Avatar>
-                    <h2 className="text-xl font-bold">
-                      {userData.firstName} {userData.lastName}
-                    </h2>
-                    <p className="text-sm text-muted-foreground mb-4">{userData.email}</p>
-                    <Button variant="outline" size="sm" className="mb-6">
-                      <Edit className="mr-2 h-4 w-4" />
-                      Change Photo
+        <div className="profile-grid">
+          <div className="profile-sidebar">
+            <Card className="profile-sidebar-card">
+              <CardContent className="profile-sidebar-content">
+                <div className="profile-user-info">
+                  <Avatar className="profile-avatar">
+                    <AvatarImage src="/placeholder.svg?height=96&width=96" alt="Profile" />
+                    <AvatarFallback>
+                      {userData.firstName.charAt(0)}
+                      {userData.lastName.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <h2 className="profile-user-name">
+                    {userData.firstName} {userData.lastName}
+                  </h2>
+                  <p className="profile-user-email">{userData.email}</p>
+                  <Button variant="outline" size="sm" className="profile-change-photo-button">
+                    <Edit className="profile-button-icon" />
+                    Change Photo
+                  </Button>
+
+                  <nav className="profile-nav">
+                    <Button variant="ghost" className="profile-nav-button profile-nav-button-active">
+                      <User className="profile-nav-icon" />
+                      Personal Information
                     </Button>
-
-                    <nav className="w-full space-y-1">
-                      <Button variant="ghost" className="w-full justify-start">
-                        <User className="mr-2 h-4 w-4" />
-                        Personal Information
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start">
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        Payment Methods
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start">
-                        <Bell className="mr-2 h-4 w-4" />
-                        Notifications
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start">
-                        <Lock className="mr-2 h-4 w-4" />
-                        Security
-                      </Button>
-                      <Button variant="ghost" className="w-full justify-start text-destructive">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sign Out
-                      </Button>
-                    </nav>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+                    <Button variant="ghost" className="profile-nav-button">
+                      <CreditCard className="profile-nav-icon" />
+                      Payment Methods
+                    </Button>
+                    <Button variant="ghost" className="profile-nav-button">
+                      <Bell className="profile-nav-icon" />
+                      Notifications
+                    </Button>
+                    <Button variant="ghost" className="profile-nav-button">
+                      <Lock className="profile-nav-icon" />
+                      Security
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="profile-nav-button profile-nav-button-logout"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="profile-nav-icon" />
+                      Sign Out
+                    </Button>
+                  </nav>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          <div className="lg:col-span-3">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <Tabs defaultValue="profile" className="w-full">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="profile">Profile</TabsTrigger>
-                  <TabsTrigger value="security">Security</TabsTrigger>
-                  <TabsTrigger value="preferences">Preferences</TabsTrigger>
-                </TabsList>
+          <div className="profile-content">
+            <Tabs defaultValue="profile" className="profile-tabs">
+              <TabsList className="profile-tabs-list">
+                <TabsTrigger value="profile" className="profile-tab">
+                  Profile
+                </TabsTrigger>
+                <TabsTrigger value="security" className="profile-tab">
+                  Security
+                </TabsTrigger>
+                <TabsTrigger value="preferences" className="profile-tab">
+                  Preferences
+                </TabsTrigger>
+              </TabsList>
 
-                <TabsContent value="profile">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Personal Information</CardTitle>
-                      <CardDescription>Update your personal information and contact details</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <form onSubmit={handleProfileSubmit} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="firstName">First Name</Label>
-                            <Input
-                              id="firstName"
-                              name="firstName"
-                              value={userData.firstName}
-                              onChange={handleChange}
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="lastName">Last Name</Label>
-                            <Input
-                              id="lastName"
-                              name="lastName"
-                              value={userData.lastName}
-                              onChange={handleChange}
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="email">Email</Label>
+              <TabsContent value="profile" className="profile-tab-content">
+                <Card className="profile-card">
+                  <CardHeader className="profile-card-header">
+                    <CardTitle className="profile-card-title">Personal Information</CardTitle>
+                    <CardDescription className="profile-card-description">
+                      Update your personal information and contact details
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="profile-card-content">
+                    <form onSubmit={handleProfileSubmit} className="profile-form">
+                      <div className="profile-form-row">
+                        <div className="profile-form-group">
+                          <Label htmlFor="firstName" className="profile-form-label">
+                            First Name
+                          </Label>
                           <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value={userData.email}
+                            id="firstName"
+                            name="firstName"
+                            value={userData.firstName}
                             onChange={handleChange}
                             required
+                            className="profile-form-input"
                           />
                         </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">Phone Number</Label>
-                          <Input id="phone" name="phone" value={userData.phone} onChange={handleChange} required />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="address">Address</Label>
-                          <Input id="address" name="address" value={userData.address} onChange={handleChange} />
-                        </div>
-
-                        <Button type="submit" disabled={isLoading}>
-                          {isLoading ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Saving...
-                            </>
-                          ) : (
-                            <>
-                              <Save className="mr-2 h-4 w-4" />
-                              Save Changes
-                            </>
-                          )}
-                        </Button>
-                      </form>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="security">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Change Password</CardTitle>
-                      <CardDescription>Update your password to keep your account secure</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="currentPassword">Current Password</Label>
-                          <div className="relative">
-                            <Input
-                              id="currentPassword"
-                              name="currentPassword"
-                              type={showPassword ? "text" : "password"}
-                              value={userData.currentPassword}
-                              onChange={handleChange}
-                              required
-                            />
-                            <button
-                              type="button"
-                              className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="newPassword">New Password</Label>
+                        <div className="profile-form-group">
+                          <Label htmlFor="lastName" className="profile-form-label">
+                            Last Name
+                          </Label>
                           <Input
-                            id="newPassword"
-                            name="newPassword"
-                            type={showPassword ? "text" : "password"}
-                            value={userData.newPassword}
+                            id="lastName"
+                            name="lastName"
+                            value={userData.lastName}
                             onChange={handleChange}
                             required
+                            className="profile-form-input"
                           />
                         </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                          <Input
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            type={showPassword ? "text" : "password"}
-                            value={userData.confirmPassword}
-                            onChange={handleChange}
-                            required
-                          />
-                        </div>
-
-                        <Button type="submit" disabled={isLoading}>
-                          {isLoading ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Updating...
-                            </>
-                          ) : (
-                            "Update Password"
-                          )}
-                        </Button>
-                      </form>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="preferences">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Preferences</CardTitle>
-                      <CardDescription>Manage your notification and communication preferences</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-6">
-                        <div>
-                          <h3 className="font-medium mb-3">Email Notifications</h3>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <Label htmlFor="booking-confirmation">Booking confirmations</Label>
-                              <input type="checkbox" id="booking-confirmation" defaultChecked />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <Label htmlFor="booking-reminders">Booking reminders</Label>
-                              <input type="checkbox" id="booking-reminders" defaultChecked />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <Label htmlFor="promotions">Promotions and deals</Label>
-                              <input type="checkbox" id="promotions" defaultChecked />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <Label htmlFor="newsletter">Newsletter</Label>
-                              <input type="checkbox" id="newsletter" />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h3 className="font-medium mb-3">SMS Notifications</h3>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <Label htmlFor="sms-booking">Booking confirmations</Label>
-                              <input type="checkbox" id="sms-booking" defaultChecked />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <Label htmlFor="sms-reminders">Booking reminders</Label>
-                              <input type="checkbox" id="sms-reminders" defaultChecked />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <Label htmlFor="sms-promotions">Promotions and deals</Label>
-                              <input type="checkbox" id="sms-promotions" />
-                            </div>
-                          </div>
-                        </div>
-
-                        <Button>Save Preferences</Button>
                       </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-            </motion.div>
+
+                      <div className="profile-form-group">
+                        <Label htmlFor="email" className="profile-form-label">
+                          Email
+                        </Label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={userData.email}
+                          onChange={handleChange}
+                          required
+                          className="profile-form-input"
+                        />
+                      </div>
+
+                      <div className="profile-form-group">
+                        <Label htmlFor="phone" className="profile-form-label">
+                          Phone Number
+                        </Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          value={userData.phone}
+                          onChange={handleChange}
+                          required
+                          className="profile-form-input"
+                        />
+                      </div>
+
+                      <div className="profile-form-group">
+                        <Label htmlFor="address" className="profile-form-label">
+                          Address
+                        </Label>
+                        <Input
+                          id="address"
+                          name="address"
+                          value={userData.address}
+                          onChange={handleChange}
+                          className="profile-form-input"
+                        />
+                      </div>
+
+                      <Button type="submit" disabled={isLoading} className="profile-submit-button">
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="profile-button-icon profile-button-icon-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="profile-button-icon" />
+                            Save Changes
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="security" className="profile-tab-content">
+                <Card className="profile-card">
+                  <CardHeader className="profile-card-header">
+                    <CardTitle className="profile-card-title">Change Password</CardTitle>
+                    <CardDescription className="profile-card-description">
+                      Update your password to keep your account secure
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="profile-card-content">
+                    <form onSubmit={handlePasswordSubmit} className="profile-form">
+                      <div className="profile-form-group">
+                        <Label htmlFor="currentPassword" className="profile-form-label">
+                          Current Password
+                        </Label>
+                        <div className="profile-password-input-wrapper">
+                          <Input
+                            id="currentPassword"
+                            name="currentPassword"
+                            type={showPassword ? "text" : "password"}
+                            value={userData.currentPassword}
+                            onChange={handleChange}
+                            required
+                            className="profile-form-input"
+                          />
+                          <button
+                            type="button"
+                            className="profile-password-toggle"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="profile-form-group">
+                        <Label htmlFor="newPassword" className="profile-form-label">
+                          New Password
+                        </Label>
+                        <Input
+                          id="newPassword"
+                          name="newPassword"
+                          type={showPassword ? "text" : "password"}
+                          value={userData.newPassword}
+                          onChange={handleChange}
+                          required
+                          className="profile-form-input"
+                        />
+                      </div>
+
+                      <div className="profile-form-group">
+                        <Label htmlFor="confirmPassword" className="profile-form-label">
+                          Confirm New Password
+                        </Label>
+                        <Input
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          type={showPassword ? "text" : "password"}
+                          value={userData.confirmPassword}
+                          onChange={handleChange}
+                          required
+                          className="profile-form-input"
+                        />
+                      </div>
+
+                      <Button type="submit" disabled={isLoading} className="profile-submit-button">
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="profile-button-icon profile-button-icon-spin" />
+                            Updating...
+                          </>
+                        ) : (
+                          "Update Password"
+                        )}
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="preferences" className="profile-tab-content">
+                <Card className="profile-card">
+                  <CardHeader className="profile-card-header">
+                    <CardTitle className="profile-card-title">Preferences</CardTitle>
+                    <CardDescription className="profile-card-description">
+                      Manage your notification and communication preferences
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="profile-card-content">
+                    <div className="profile-preferences">
+                      <div className="profile-preference-section">
+                        <h3 className="profile-preference-title">Email Notifications</h3>
+                        <div className="profile-preference-options">
+                          <div className="profile-preference-option">
+                            <Label htmlFor="booking-confirmation" className="profile-preference-label">
+                              Booking confirmations
+                            </Label>
+                            <input
+                              type="checkbox"
+                              id="booking-confirmation"
+                              defaultChecked
+                              className="profile-preference-checkbox"
+                            />
+                          </div>
+                          <div className="profile-preference-option">
+                            <Label htmlFor="booking-reminders" className="profile-preference-label">
+                              Booking reminders
+                            </Label>
+                            <input
+                              type="checkbox"
+                              id="booking-reminders"
+                              defaultChecked
+                              className="profile-preference-checkbox"
+                            />
+                          </div>
+                          <div className="profile-preference-option">
+                            <Label htmlFor="promotions" className="profile-preference-label">
+                              Promotions and deals
+                            </Label>
+                            <input
+                              type="checkbox"
+                              id="promotions"
+                              defaultChecked
+                              className="profile-preference-checkbox"
+                            />
+                          </div>
+                          <div className="profile-preference-option">
+                            <Label htmlFor="newsletter" className="profile-preference-label">
+                              Newsletter
+                            </Label>
+                            <input type="checkbox" id="newsletter" className="profile-preference-checkbox" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="profile-preference-section">
+                        <h3 className="profile-preference-title">SMS Notifications</h3>
+                        <div className="profile-preference-options">
+                          <div className="profile-preference-option">
+                            <Label htmlFor="sms-booking" className="profile-preference-label">
+                              Booking confirmations
+                            </Label>
+                            <input
+                              type="checkbox"
+                              id="sms-booking"
+                              defaultChecked
+                              className="profile-preference-checkbox"
+                            />
+                          </div>
+                          <div className="profile-preference-option">
+                            <Label htmlFor="sms-reminders" className="profile-preference-label">
+                              Booking reminders
+                            </Label>
+                            <input
+                              type="checkbox"
+                              id="sms-reminders"
+                              defaultChecked
+                              className="profile-preference-checkbox"
+                            />
+                          </div>
+                          <div className="profile-preference-option">
+                            <Label htmlFor="sms-promotions" className="profile-preference-label">
+                              Promotions and deals
+                            </Label>
+                            <input type="checkbox" id="sms-promotions" className="profile-preference-checkbox" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <Button className="profile-preferences-button">Save Preferences</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>

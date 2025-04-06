@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button"
 import { Card, CardContent } from "../components/ui/card"
 import { Bus, CheckCircle, Clock, Shield, Users } from "lucide-react"
 import { Link } from "react-router-dom"
+import "../styles/about.css"
 
 export default function AboutPage() {
   const containerVariants = {
@@ -56,27 +57,32 @@ export default function AboutPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="about-page">
       {/* Hero Section */}
-      <section className="relative bg-primary text-primary-foreground py-16 md:py-24">
-        <div className="container px-4">
-          <div className="grid gap-8 md:grid-cols-2 items-center">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-4">About TravelEase</h1>
-              <p className="text-lg opacity-90 mb-6">
+      <section className="about-hero">
+        <div className="container">
+          <div className="about-hero-grid">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="about-hero-content"
+            >
+              <h1 className="about-hero-title">About TravelEase</h1>
+              <p className="about-hero-subtitle">
                 Connecting Cameroon with safe, reliable, and comfortable bus travel since 2015
               </p>
-              <div className="flex flex-wrap gap-4">
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 mr-2" />
+              <div className="about-hero-features">
+                <div className="about-hero-feature">
+                  <CheckCircle className="about-hero-feature-icon" />
                   <span>50+ Routes</span>
                 </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 mr-2" />
+                <div className="about-hero-feature">
+                  <CheckCircle className="about-hero-feature-icon" />
                   <span>100+ Buses</span>
                 </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 mr-2" />
+                <div className="about-hero-feature">
+                  <CheckCircle className="about-hero-feature-icon" />
                   <span>500,000+ Happy Travelers</span>
                 </div>
               </div>
@@ -86,14 +92,10 @@ export default function AboutPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative"
+              className="about-hero-image-container"
             >
-              <div className="relative h-[300px] rounded-xl overflow-hidden shadow-xl">
-                <img
-                  src="/placeholder.svg?height=400&width=600"
-                  alt="TravelEase bus"
-                  className="w-full h-full object-cover"
-                />
+              <div className="about-hero-image">
+                <img src="/placeholder.svg?height=400&width=600" alt="TravelEase bus" />
               </div>
             </motion.div>
           </div>
@@ -101,37 +103,33 @@ export default function AboutPage() {
       </section>
 
       {/* Our Story Section */}
-      <section className="py-16 md:py-24">
-        <div className="container px-4">
+      <section className="about-story">
+        <div className="container">
           <motion.div
-            className="text-center max-w-3xl mx-auto mb-16"
+            className="about-section-header"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={containerVariants}
           >
-            <motion.h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4" variants={itemVariants}>
+            <motion.h2 className="about-section-title" variants={itemVariants}>
               Our Story
             </motion.h2>
-            <motion.p className="text-lg text-muted-foreground" variants={itemVariants}>
+            <motion.p className="about-section-subtitle" variants={itemVariants}>
               How we're transforming bus travel in Cameroon
             </motion.p>
           </motion.div>
 
-          <div className="grid gap-8 md:grid-cols-2 items-center">
+          <div className="about-story-grid">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="relative"
+              className="about-story-image-container"
             >
-              <div className="relative h-[400px] rounded-xl overflow-hidden shadow-xl">
-                <img
-                  src="/placeholder.svg?height=400&width=600"
-                  alt="TravelEase history"
-                  className="w-full h-full object-cover"
-                />
+              <div className="about-story-image">
+                <img src="/placeholder.svg?height=400&width=600" alt="TravelEase history" />
               </div>
             </motion.div>
 
@@ -140,81 +138,82 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
+              className="about-story-content"
             >
-              <h3 className="text-2xl font-bold mb-4">From Humble Beginnings</h3>
-              <p className="text-muted-foreground mb-4">
+              <h3 className="about-story-title">From Humble Beginnings</h3>
+              <p className="about-story-text">
                 TravelEase was founded in 2015 with just 5 buses and a simple mission: to make bus travel in Cameroon
                 safer, more reliable, and more comfortable. Our founder, Emmanuel Nkwenti, experienced firsthand the
                 challenges of intercity travel and was determined to create a better solution.
               </p>
-              <p className="text-muted-foreground mb-4">
+              <p className="about-story-text">
                 Starting with routes between Douala and Yaoundé, we quickly gained a reputation for punctuality, safety,
                 and customer service. As demand grew, so did our fleet and route network.
               </p>
-              <p className="text-muted-foreground mb-6">
+              <p className="about-story-text">
                 Today, TravelEase operates over 100 buses serving more than 50 routes across Cameroon, connecting major
                 cities and rural communities alike. Our online booking platform has revolutionized how Cameroonians plan
                 and book their travel, making the process seamless and stress-free.
               </p>
-              <Button>Learn More About Our Journey</Button>
+              <Button className="about-story-button">Learn More About Our Journey</Button>
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* Our Values Section */}
-      <section className="py-16 md:py-24 bg-muted">
-        <div className="container px-4">
+      <section className="about-values">
+        <div className="container">
           <motion.div
-            className="text-center max-w-3xl mx-auto mb-16"
+            className="about-section-header"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={containerVariants}
           >
-            <motion.h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4" variants={itemVariants}>
+            <motion.h2 className="about-section-title" variants={itemVariants}>
               Our Values
             </motion.h2>
-            <motion.p className="text-lg text-muted-foreground" variants={itemVariants}>
+            <motion.p className="about-section-subtitle" variants={itemVariants}>
               The principles that guide everything we do
             </motion.p>
           </motion.div>
 
           <motion.div
-            className="grid gap-8 md:grid-cols-3"
+            className="about-values-grid"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={containerVariants}
           >
-            <motion.div className="bg-background rounded-xl p-6 shadow-sm border border-border" variants={itemVariants}>
-              <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                <Shield className="h-6 w-6 text-primary" />
+            <motion.div className="about-value-card" variants={itemVariants}>
+              <div className="about-value-icon-container">
+                <Shield className="about-value-icon" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Safety First</h3>
-              <p className="text-muted-foreground">
+              <h3 className="about-value-title">Safety First</h3>
+              <p className="about-value-text">
                 We prioritize the safety of our passengers above all else. Our buses undergo rigorous maintenance, and
                 our drivers receive extensive training and regular assessments.
               </p>
             </motion.div>
 
-            <motion.div className="bg-background rounded-xl p-6 shadow-sm border border-border" variants={itemVariants}>
-              <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                <Clock className="h-6 w-6 text-primary" />
+            <motion.div className="about-value-card" variants={itemVariants}>
+              <div className="about-value-icon-container">
+                <Clock className="about-value-icon" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Reliability</h3>
-              <p className="text-muted-foreground">
+              <h3 className="about-value-title">Reliability</h3>
+              <p className="about-value-text">
                 We understand that our customers depend on us to reach their destinations on time. We maintain strict
                 schedules and communicate proactively about any changes.
               </p>
             </motion.div>
 
-            <motion.div className="bg-background rounded-xl p-6 shadow-sm border border-border" variants={itemVariants}>
-              <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                <Users className="h-6 w-6 text-primary" />
+            <motion.div className="about-value-card" variants={itemVariants}>
+              <div className="about-value-icon-container">
+                <Users className="about-value-icon" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Customer-Centric</h3>
-              <p className="text-muted-foreground">
+              <h3 className="about-value-title">Customer-Centric</h3>
+              <p className="about-value-text">
                 Every decision we make is with our customers in mind. We continuously seek feedback and make
                 improvements to enhance the travel experience.
               </p>
@@ -224,25 +223,25 @@ export default function AboutPage() {
       </section>
 
       {/* Our Team Section */}
-      <section className="py-16 md:py-24">
-        <div className="container px-4">
+      <section className="about-team">
+        <div className="container">
           <motion.div
-            className="text-center max-w-3xl mx-auto mb-16"
+            className="about-section-header"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={containerVariants}
           >
-            <motion.h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4" variants={itemVariants}>
+            <motion.h2 className="about-section-title" variants={itemVariants}>
               Meet Our Team
             </motion.h2>
-            <motion.p className="text-lg text-muted-foreground" variants={itemVariants}>
+            <motion.p className="about-section-subtitle" variants={itemVariants}>
               The dedicated professionals behind TravelEase
             </motion.p>
           </motion.div>
 
           <motion.div
-            className="grid gap-8 md:grid-cols-2 lg:grid-cols-4"
+            className="about-team-grid"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -250,18 +249,14 @@ export default function AboutPage() {
           >
             {teamMembers.map((member, index) => (
               <motion.div key={index} variants={itemVariants}>
-                <Card>
-                  <div className="relative h-[300px]">
-                    <img
-                      src={member.image || "/placeholder.svg"}
-                      alt={member.name}
-                      className="w-full h-full object-cover"
-                    />
+                <Card className="about-team-card">
+                  <div className="about-team-image-container">
+                    <img src={member.image || "/placeholder.svg"} alt={member.name} className="about-team-image" />
                   </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-bold mb-1">{member.name}</h3>
-                    <p className="text-primary font-medium mb-3">{member.position}</p>
-                    <p className="text-sm text-muted-foreground">{member.bio}</p>
+                  <CardContent className="about-team-content">
+                    <h3 className="about-team-name">{member.name}</h3>
+                    <p className="about-team-position">{member.position}</p>
+                    <p className="about-team-bio">{member.bio}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -271,33 +266,33 @@ export default function AboutPage() {
       </section>
 
       {/* Achievements Section */}
-      <section className="py-16 md:py-24 bg-primary text-primary-foreground">
-        <div className="container px-4">
+      <section className="about-achievements">
+        <div className="container">
           <motion.div
-            className="text-center max-w-3xl mx-auto mb-16"
+            className="about-section-header"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={containerVariants}
           >
-            <motion.h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4" variants={itemVariants}>
+            <motion.h2 className="about-section-title" variants={itemVariants}>
               Our Achievements
             </motion.h2>
-            <motion.p className="text-lg opacity-90" variants={itemVariants}>
+            <motion.p className="about-section-subtitle" variants={itemVariants}>
               Milestones we've reached along our journey
             </motion.p>
           </motion.div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="about-achievements-grid">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-center"
+              className="about-achievement"
             >
-              <div className="text-4xl font-bold mb-2">500K+</div>
-              <p className="text-lg">Passengers Served</p>
+              <div className="about-achievement-number">500K+</div>
+              <p className="about-achievement-text">Passengers Served</p>
             </motion.div>
 
             <motion.div
@@ -305,10 +300,10 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-center"
+              className="about-achievement"
             >
-              <div className="text-4xl font-bold mb-2">50+</div>
-              <p className="text-lg">Routes Across Cameroon</p>
+              <div className="about-achievement-number">50+</div>
+              <p className="about-achievement-text">Routes Across Cameroon</p>
             </motion.div>
 
             <motion.div
@@ -316,10 +311,10 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-center"
+              className="about-achievement"
             >
-              <div className="text-4xl font-bold mb-2">100+</div>
-              <p className="text-lg">Modern Buses</p>
+              <div className="about-achievement-number">100+</div>
+              <p className="about-achievement-text">Modern Buses</p>
             </motion.div>
 
             <motion.div
@@ -327,38 +322,38 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="text-center"
+              className="about-achievement"
             >
-              <div className="text-4xl font-bold mb-2">4.8/5</div>
-              <p className="text-lg">Customer Satisfaction</p>
+              <div className="about-achievement-number">4.8/5</div>
+              <p className="about-achievement-text">Customer Satisfaction</p>
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24">
-        <div className="container px-4">
+      <section className="about-cta">
+        <div className="container">
           <motion.div
-            className="max-w-3xl mx-auto text-center"
+            className="about-cta-container"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">Ready to Experience TravelEase?</h2>
-            <p className="text-lg text-muted-foreground mb-8">
+            <h2 className="about-cta-title">Ready to Experience TravelEase?</h2>
+            <p className="about-cta-text">
               Join thousands of satisfied travelers who choose TravelEase for their journeys across Cameroon.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/search">
-                <Button size="lg">
-                  <Bus className="mr-2 h-5 w-5" />
+            <div className="about-cta-buttons">
+              <Link to="/search" className="about-cta-button-link">
+                <Button className="about-cta-button">
+                  <Bus className="about-cta-button-icon" />
                   Book Your Trip
                 </Button>
               </Link>
-              <Link to="/contact">
-                <Button variant="outline" size="lg">
+              <Link to="/contact" className="about-cta-button-link">
+                <Button variant="outline" className="about-cta-button">
                   Contact Us
                 </Button>
               </Link>
